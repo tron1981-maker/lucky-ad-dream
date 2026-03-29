@@ -64,7 +64,7 @@ export default function FixedNumbers() {
     <div className="min-h-screen bg-background pb-20">
       <header className="px-5 pt-14 pb-2">
         <h1 className="toss-title text-[26px]">고정 수 관리</h1>
-        <p className="toss-subtitle mt-1">최대 20개의 숫자를 등록할 수 있어요</p>
+        <p className="toss-subtitle mt-1">최대 20개의 숫자를 등록할 수 있어요. 고정 수도 조합수에 반영이 됩니다.</p>
       </header>
 
       <div className="px-5 space-y-4 mt-4">
