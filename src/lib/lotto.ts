@@ -98,6 +98,28 @@ export function createInitialSlots(): FixedSlot[] {
 // Local storage helpers
 const HISTORY_KEY = "minority-report-history";
 const SLOTS_KEY = "minority-report-slots";
+const DATE_SLOTS_KEY = "minority-report-date-slots";
+
+export function createInitialDateSlots(): DateSlot[] {
+  return [{
+    id: crypto.randomUUID(),
+    label: "기념일 1",
+    month: "",
+    day: "",
+    year: "",
+  }];
+}
+
+export function saveDateSlots(slots: DateSlot[]) {
+  localStorage.setItem(DATE_SLOTS_KEY, JSON.stringify(slots));
+}
+
+export function loadDateSlots(): DateSlot[] {
+  try {
+    const data = localStorage.getItem(DATE_SLOTS_KEY);
+    return data ? JSON.parse(data) : createInitialDateSlots();
+  } catch { return createInitialDateSlots(); }
+}
 
 export function saveHistory(draws: DrawResult[]) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(draws));
