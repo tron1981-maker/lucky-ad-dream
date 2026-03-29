@@ -13,6 +13,21 @@ export interface FixedSlot {
   isLocked: boolean;
 }
 
+export interface DateSlot {
+  id: string;
+  label: string;
+  month: string;
+  day: string;
+  year: string; // optional, can be empty
+}
+
+export function dateSlotToString(slot: DateSlot): string {
+  const parts = [];
+  if (slot.year) parts.push(slot.year);
+  parts.push(slot.month.padStart(2, "0"), slot.day.padStart(2, "0"));
+  return parts.join("");
+}
+
 export function getBallColor(num: number): string {
   if (num <= 10) return "ball-yellow";
   if (num <= 20) return "ball-blue";
