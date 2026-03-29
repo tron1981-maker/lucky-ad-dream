@@ -5,47 +5,103 @@ import { AdModal } from "@/components/AdModal";
 import {
   generateLottoNumbers,
   dateToNumbers,
+  dateSlotToString,
   loadSlots,
   loadHistory,
   saveHistory,
+  loadDateSlots,
+  saveDateSlots,
   type DrawResult,
+  type DateSlot,
 } from "@/lib/lotto";
 import { BottomNav } from "@/components/BottomNav";
-import { CalendarDays, Sparkles } from "lucide-react";
+import { CalendarDays, Sparkles, Plus, X } from "lucide-react";
+
+const MAX_DATE_SLOTS = 10;
 
 export default function Index() {
-  const [dateInput, setDateInput] = useState("");
+  const [dateSlots, setDateSlots] = useState<DateSlot[]>(loadDateSlots);
   const [result, setResult] = useState<number[] | null>(null);
   const [showAd, setShowAd] = useState(false);
+  const [adPurpose, setAdPurpose] = useState<"draw" | "addSlot">("draw");
   const [isRevealing, setIsRevealing] = useState(false);
 
+  const updateDateSlots = useCallback((slots: DateSlot[]) => {
+    setDateSlots(slots);
+    saveDateSlots(slots);
+  }, []);
+
   const handleDraw = useCallback(() => {
+    setAdPurpose("draw");
     setShowAd(true);
   }, []);
 
+  const handleAddSlot = useCallback(() => {
+    if (dateSlots.length >= MAX_DATE_SLOTS) return;
+    setAdPurpose("addSlot");
+    setShowAd(true);
+  }, [dateSlots.length]);
+
+  const handleRemoveSlot = useCallback((id: string) => {
+    updateDateSlots(dateSlots.filter(s => s.id !== id));
+  }, [dateSlots, updateDateSlots]);
+
+  const handleSlotChange = useCallback((id: string, field: keyof DateSlot, value: string) => {
+    updateDateSlots(
+      dateSlots.map(s => s.id === id ? { ...s, [field]: value } : s)
+    );
+  }, [dateSlots, updateDateSlots]);
+
   const handleAdComplete = useCallback(() => {
+    if (adPurpose === "addSlot") {
+      const newSlot: DateSlot = {
+        id: crypto.randomUUID(),
+        label: `기념일 ${dateSlots.length + 1}`,
+        month: "",
+        day: "",
+        year: "",
+      };
+      updateDateSlots([...dateSlots, newSlot]);
+      return;
+    }
+
+    // Draw logic
     const slots = loadSlots();
     const fixedNums = slots
       .filter(s => !s.isLocked && s.value !== null)
       .map(s => s.value!);
-    const dateNums = dateInput ? dateToNumbers(dateInput) : [];
 
-    const numbers = generateLottoNumbers(fixedNums, dateNums);
+    const allDateNums: number[] = [];
+    for (const ds of dateSlots) {
+      if (ds.month && ds.day) {
+        const str = dateSlotToString(ds);
+        allDateNums.push(...dateToNumbers(str));
+      }
+    }
+
+    const numbers = generateLottoNumbers(fixedNums, allDateNums);
     setResult(numbers);
     setIsRevealing(true);
 
-    // Save to history
+    const baseDateStr = dateSlots
+      .filter(ds => ds.month && ds.day)
+      .map(ds => {
+        const y = ds.year || "????";
+        return `${y}/${ds.month.padStart(2, "0")}/${ds.day.padStart(2, "0")}`;
+      })
+      .join(", ") || "없음";
+
     const history = loadHistory();
     const newDraw: DrawResult = {
       id: crypto.randomUUID(),
       numbers,
-      baseDate: dateInput || "없음",
+      baseDate: baseDateStr,
       createdAt: new Date().toISOString(),
     };
     saveHistory([newDraw, ...history]);
 
     setTimeout(() => setIsRevealing(false), 2500);
-  }, [dateInput]);
+  }, [adPurpose, dateSlots, updateDateSlots]);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -58,19 +114,91 @@ export default function Index() {
       <div className="px-5 space-y-4 mt-4">
         {/* Date Input Card */}
         <div className="toss-card space-y-3">
-          <div className="flex items-center gap-2">
-            <CalendarDays className="w-5 h-5 text-primary" />
-            <span className="text-[15px] font-semibold">기념일 입력</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="w-5 h-5 text-primary" />
+              <span className="text-[15px] font-semibold">기념일 입력</span>
+            </div>
+            <span className="text-[12px] text-muted-foreground">
+              {dateSlots.length}/{MAX_DATE_SLOTS}
+            </span>
           </div>
           <p className="text-[13px] text-muted-foreground">
             생일, 기념일 등의 날짜를 입력하면 번호 조합에 반영됩니다
           </p>
-          <input
-            type="date"
-            value={dateInput}
-            onChange={e => setDateInput(e.target.value)}
-            className="w-full h-12 px-4 rounded-xl bg-secondary text-foreground text-[15px] border-none outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-          />
+
+          <div className="space-y-2.5">
+            {dateSlots.map((slot, idx) => (
+              <div key={slot.id} className="flex items-center gap-2">
+                <div className="flex-1 flex items-center gap-1.5 bg-secondary rounded-xl px-3 py-2.5">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="연(선택)"
+                    maxLength={4}
+                    value={slot.year}
+                    onChange={e => {
+                      const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      handleSlotChange(slot.id, "year", v);
+                    }}
+                    className="w-[72px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                  />
+                  <span className="text-muted-foreground/40 text-[14px]">/</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="월"
+                    maxLength={2}
+                    value={slot.month}
+                    onChange={e => {
+                      const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                      if (v === "" || (parseInt(v) >= 0 && parseInt(v) <= 12)) {
+                        handleSlotChange(slot.id, "month", v);
+                      }
+                    }}
+                    className="w-[40px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                  />
+                  <span className="text-muted-foreground/40 text-[14px]">/</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="일"
+                    maxLength={2}
+                    value={slot.day}
+                    onChange={e => {
+                      const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                      if (v === "" || (parseInt(v) >= 0 && parseInt(v) <= 31)) {
+                        handleSlotChange(slot.id, "day", v);
+                      }
+                    }}
+                    className="w-[40px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                  />
+                </div>
+                {idx === 0 ? (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-[10px] font-bold text-primary">무료</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleRemoveSlot(slot.id)}
+                    className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center shrink-0"
+                  >
+                    <X className="w-3.5 h-3.5 text-destructive" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {dateSlots.length < MAX_DATE_SLOTS && (
+            <button
+              onClick={handleAddSlot}
+              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-dashed border-muted-foreground/20 text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-[13px] font-medium">기념일 추가 (광고 시청)</span>
+            </button>
+          )}
         </div>
 
         {/* Result Card */}

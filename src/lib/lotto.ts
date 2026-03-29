@@ -13,6 +13,21 @@ export interface FixedSlot {
   isLocked: boolean;
 }
 
+export interface DateSlot {
+  id: string;
+  label: string;
+  month: string;
+  day: string;
+  year: string; // optional, can be empty
+}
+
+export function dateSlotToString(slot: DateSlot): string {
+  const parts = [];
+  if (slot.year) parts.push(slot.year);
+  parts.push(slot.month.padStart(2, "0"), slot.day.padStart(2, "0"));
+  return parts.join("");
+}
+
 export function getBallColor(num: number): string {
   if (num <= 10) return "ball-yellow";
   if (num <= 20) return "ball-blue";
@@ -83,6 +98,28 @@ export function createInitialSlots(): FixedSlot[] {
 // Local storage helpers
 const HISTORY_KEY = "minority-report-history";
 const SLOTS_KEY = "minority-report-slots";
+const DATE_SLOTS_KEY = "minority-report-date-slots";
+
+export function createInitialDateSlots(): DateSlot[] {
+  return [{
+    id: crypto.randomUUID(),
+    label: "기념일 1",
+    month: "",
+    day: "",
+    year: "",
+  }];
+}
+
+export function saveDateSlots(slots: DateSlot[]) {
+  localStorage.setItem(DATE_SLOTS_KEY, JSON.stringify(slots));
+}
+
+export function loadDateSlots(): DateSlot[] {
+  try {
+    const data = localStorage.getItem(DATE_SLOTS_KEY);
+    return data ? JSON.parse(data) : createInitialDateSlots();
+  } catch { return createInitialDateSlots(); }
+}
 
 export function saveHistory(draws: DrawResult[]) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(draws));
