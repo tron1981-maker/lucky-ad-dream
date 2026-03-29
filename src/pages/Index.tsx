@@ -129,8 +129,27 @@ export default function Index() {
 
           <div className="space-y-2.5">
             {dateSlots.map((slot, idx) => (
-              <div key={slot.id} className="flex items-center gap-2">
-                <div className="flex-1 flex items-center gap-1.5 bg-secondary rounded-xl px-3 py-2.5">
+              <div key={slot.id} className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="기념일 이름 (예: 엄마 생일)"
+                    value={slot.label}
+                    onChange={e => handleSlotChange(slot.id, "label", e.target.value)}
+                    className="flex-1 bg-transparent text-foreground text-[13px] font-medium outline-none placeholder:text-muted-foreground/40"
+                  />
+                  {idx === 0 ? (
+                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full shrink-0">무료</span>
+                  ) : (
+                    <button
+                      onClick={() => handleRemoveSlot(slot.id)}
+                      className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0"
+                    >
+                      <X className="w-3 h-3 text-destructive" />
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5 bg-secondary rounded-xl px-3 py-2.5">
                   <input
                     type="text"
                     inputMode="numeric"
@@ -174,18 +193,6 @@ export default function Index() {
                     className="w-[40px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
                   />
                 </div>
-                {idx === 0 ? (
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="text-[10px] font-bold text-primary">무료</span>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleRemoveSlot(slot.id)}
-                    className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center shrink-0"
-                  >
-                    <X className="w-3.5 h-3.5 text-destructive" />
-                  </button>
-                )}
               </div>
             ))}
           </div>
