@@ -74,8 +74,7 @@ export default function Index() {
     const allDateNums: number[] = [];
     for (const ds of dateSlots) {
       if (ds.month && ds.day) {
-        const str = dateSlotToString(ds);
-        allDateNums.push(...dateToNumbers(str));
+        allDateNums.push(...dateToNumbers(ds));
       }
     }
 
