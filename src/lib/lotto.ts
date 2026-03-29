@@ -44,19 +44,30 @@ export function getBallBgClass(num: number): string {
   return "bg-ball-green text-primary-foreground";
 }
 
-export function dateToNumbers(dateStr: string): number[] {
+export function dateToNumbers(slot: DateSlot): number[] {
   const nums: number[] = [];
-  const cleaned = dateStr.replace(/\D/g, "");
-  for (const ch of cleaned) {
-    const n = parseInt(ch);
-    if (n >= 1 && n <= 9) nums.push(n);
+
+  // Year: split into 2-digit chunks (e.g., 2026 → 20, 26)
+  if (slot.year && slot.year.length === 4) {
+    const y1 = parseInt(slot.year.substring(0, 2));
+    const y2 = parseInt(slot.year.substring(2, 4));
+    if (y1 >= 1 && y1 <= 45) nums.push(y1);
+    if (y2 >= 1 && y2 <= 45) nums.push(y2);
   }
-  // Also generate composite numbers from pairs
-  for (let i = 0; i < cleaned.length - 1; i++) {
-    const pair = parseInt(cleaned.substring(i, i + 2));
-    if (pair >= 1 && pair <= 45) nums.push(pair);
+
+  // Month as-is (e.g., 3 → 3)
+  if (slot.month) {
+    const m = parseInt(slot.month);
+    if (m >= 1 && m <= 45) nums.push(m);
   }
-  return [...new Set(nums)].filter(n => n >= 1 && n <= 45);
+
+  // Day as-is (e.g., 12 → 12)
+  if (slot.day) {
+    const d = parseInt(slot.day);
+    if (d >= 1 && d <= 45) nums.push(d);
+  }
+
+  return [...new Set(nums)];
 }
 
 export function generateLottoNumbers(
