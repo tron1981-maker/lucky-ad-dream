@@ -121,8 +121,11 @@ export function loadDateSlots(): DateSlot[] {
   } catch { return createInitialDateSlots(); }
 }
 
+const MAX_HISTORY = 10;
+
 export function saveHistory(draws: DrawResult[]) {
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(draws));
+  const trimmed = draws.slice(0, MAX_HISTORY);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(trimmed));
 }
 
 export function loadHistory(): DrawResult[] {
