@@ -114,7 +114,7 @@ const DATE_SLOTS_KEY = "minority-report-date-slots";
 export function createInitialDateSlots(): DateSlot[] {
   return [{
     id: crypto.randomUUID(),
-    label: "기념일 1",
+    label: "",
     month: "",
     day: "",
     year: "",
