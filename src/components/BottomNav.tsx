@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Sparkles, Grid3X3, ClockArrowUp } from "lucide-react";
+import { Sparkles, Grid3X3, ClockArrowUp, BarChart3 } from "lucide-react";
 
 const tabs = [
   { path: "/", label: "추첨", icon: Sparkles },
   { path: "/fixed", label: "고정 수", icon: Grid3X3 },
   { path: "/history", label: "기록", icon: ClockArrowUp },
+  { path: "/admin", label: "통계", icon: BarChart3 },
 ];
 
 export function BottomNav() {

@@ -14,6 +14,7 @@ import {
   type DrawResult,
   type DateSlot,
 } from "@/lib/lotto";
+import { recordNumbers, incrementTotalDraws } from "@/lib/stats";
 import { BottomNav } from "@/components/BottomNav";
 import { CalendarDays, Sparkles, Plus, X } from "lucide-react";
 
@@ -79,6 +80,8 @@ export default function Index() {
     }
 
     const numbers = generateLottoNumbers(fixedNums, allDateNums);
+    recordNumbers(numbers);
+    incrementTotalDraws();
     setResult(numbers);
     setIsRevealing(true);
 
