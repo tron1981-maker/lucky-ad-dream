@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { AdModal } from "@/components/AdModal";
 import { loadSlots, saveSlots, type FixedSlot } from "@/lib/lotto";
+import { recordFixedNumber, removeFixedNumber } from "@/lib/stats";
 import { LottoBall } from "@/components/LottoBall";
 import { Lock, Unlock, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,12 @@ export default function FixedNumbers() {
       setEditingSlot(null);
       return;
     }
+    // 기존 값이 있으면 통계에서 제거
+    const oldSlot = slots.find(s => s.index === slotIndex);
+    if (oldSlot?.value !== null && oldSlot?.value !== undefined) {
+      removeFixedNumber(oldSlot.value);
+    }
+    recordFixedNumber(num);
     setSlots(prev =>
       prev.map(s => (s.index === slotIndex ? { ...s, value: num } : s))
     );
@@ -41,6 +48,10 @@ export default function FixedNumbers() {
   };
 
   const handleClear = (slotIndex: number) => {
+    const oldSlot = slots.find(s => s.index === slotIndex);
+    if (oldSlot?.value !== null && oldSlot?.value !== undefined) {
+      removeFixedNumber(oldSlot.value);
+    }
     setSlots(prev =>
       prev.map(s => (s.index === slotIndex ? { ...s, value: null } : s))
     );

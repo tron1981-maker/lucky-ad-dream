@@ -14,7 +14,7 @@ import {
   type DrawResult,
   type DateSlot,
 } from "@/lib/lotto";
-import { recordNumbers, incrementTotalDraws } from "@/lib/stats";
+import { recordNumbers, incrementTotalDraws, recordDrawLog, type DrawLog } from "@/lib/stats";
 import { BottomNav } from "@/components/BottomNav";
 import { CalendarDays, Sparkles, Plus, X } from "lucide-react";
 
@@ -93,12 +93,26 @@ export default function Index() {
       })
       .join(", ") || "없음";
 
+    const now = new Date().toISOString();
+    const drawId = crypto.randomUUID();
+
+    // 회차별 로그 기록
+    const drawLog: DrawLog = {
+      id: drawId,
+      numbers,
+      fixedNumbers: fixedNums,
+      dateNumbers: allDateNums,
+      baseDate: baseDateStr,
+      createdAt: now,
+    };
+    recordDrawLog(drawLog);
+
     const history = loadHistory();
     const newDraw: DrawResult = {
-      id: crypto.randomUUID(),
+      id: drawId,
       numbers,
       baseDate: baseDateStr,
-      createdAt: new Date().toISOString(),
+      createdAt: now,
     };
     saveHistory([newDraw, ...history]);
 
