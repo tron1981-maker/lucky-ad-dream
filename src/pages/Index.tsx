@@ -106,7 +106,7 @@ export default function Index() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="px-5 pt-14 pb-2">
-        <h1 className="toss-title text-[26px]">소수리포트</h1>
+        <h1 className="toss-title text-[26px]">로또 번호 조합기</h1>
         <p className="toss-subtitle mt-1">나만의 로또 번호를 추첨하세요</p>
       </header>
 
