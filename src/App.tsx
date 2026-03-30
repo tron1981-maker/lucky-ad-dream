@@ -8,6 +8,10 @@ import FixedNumbers from "./pages/FixedNumbers.tsx";
 import History from "./pages/History.tsx";
 import Admin from "./pages/Admin.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { migrateExistingHistory } from "./lib/stats";
+
+// 기존 추첨 기록을 통계에 반영
+migrateExistingHistory();
 
 const queryClient = new QueryClient();
 

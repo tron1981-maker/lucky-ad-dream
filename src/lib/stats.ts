@@ -134,3 +134,63 @@ export function recordDrawLog(entry: DrawLog) {
   const log = loadDrawLog();
   saveDrawLog([entry, ...log]);
 }
+
+// === 기존 기록 마이그레이션 ===
+
+const MIGRATION_KEY = "minority-report-stats-migrated";
+
+export function migrateExistingHistory() {
+  // 이미 마이그레이션 완료된 경우 스킵
+  if (localStorage.getItem(MIGRATION_KEY)) return;
+
+  try {
+    const historyData = localStorage.getItem("minority-report-history");
+    if (!historyData) {
+      localStorage.setItem(MIGRATION_KEY, "1");
+      return;
+    }
+
+    const history: { id: string; numbers: number[]; baseDate: string; createdAt: string }[] =
+      JSON.parse(historyData);
+
+    if (history.length === 0) {
+      localStorage.setItem(MIGRATION_KEY, "1");
+      return;
+    }
+
+    // 기존 통계가 이미 있으면 그 위에 덧씌우지 않기 위해 현재 totalDraws 확인
+    const currentTotal = getTotalDraws();
+    if (currentTotal > 0) {
+      localStorage.setItem(MIGRATION_KEY, "1");
+      return;
+    }
+
+    // 기존 기록을 통계에 반영
+    const stats = loadStats();
+    for (const draw of history) {
+      for (const num of draw.numbers) {
+        stats[num] = (stats[num] || 0) + 1;
+      }
+    }
+    saveStats(stats);
+    localStorage.setItem("minority-report-total-draws", String(history.length));
+
+    // 기존 기록을 회차별 로그에도 반영 (고정수/기념일 정보는 없으므로 빈 배열)
+    const existingLog = loadDrawLog();
+    if (existingLog.length === 0) {
+      const logEntries: DrawLog[] = history.map(draw => ({
+        id: draw.id,
+        numbers: draw.numbers,
+        fixedNumbers: [],
+        dateNumbers: [],
+        baseDate: draw.baseDate,
+        createdAt: draw.createdAt,
+      }));
+      saveDrawLog(logEntries);
+    }
+
+    localStorage.setItem(MIGRATION_KEY, "1");
+  } catch {
+    localStorage.setItem(MIGRATION_KEY, "1");
+  }
+}
