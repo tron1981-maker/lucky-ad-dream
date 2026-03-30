@@ -56,7 +56,7 @@ export default function Index() {
     if (adPurpose === "addSlot") {
       const newSlot: DateSlot = {
         id: crypto.randomUUID(),
-        label: `기념일 ${dateSlots.length + 1}`,
+        label: "",
         month: "",
         day: "",
         year: "",
