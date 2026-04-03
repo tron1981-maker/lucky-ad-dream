@@ -152,7 +152,7 @@ export default function Index() {
                     placeholder="기념일 이름 (예: 엄마 생일)"
                     value={slot.label}
                     onChange={e => handleSlotChange(slot.id, "label", e.target.value)}
-                    className="flex-1 bg-transparent text-foreground text-[13px] font-medium outline-none placeholder:text-muted-foreground/40"
+                    className="flex-1 bg-transparent text-foreground text-[16px] font-medium outline-none placeholder:text-muted-foreground/40"
                   />
                   {idx === 0 ? (
                     <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full shrink-0">무료</span>
