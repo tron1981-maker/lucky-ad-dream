@@ -152,7 +152,7 @@ export default function Index() {
                     placeholder="기념일 이름 (예: 엄마 생일)"
                     value={slot.label}
                     onChange={e => handleSlotChange(slot.id, "label", e.target.value)}
-                    className="flex-1 bg-transparent text-foreground text-[13px] font-medium outline-none placeholder:text-muted-foreground/40"
+                    className="flex-1 bg-transparent text-foreground text-[16px] font-medium outline-none placeholder:text-muted-foreground/40"
                   />
                   {idx === 0 ? (
                     <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full shrink-0">무료</span>
@@ -176,7 +176,7 @@ export default function Index() {
                       const v = e.target.value.replace(/\D/g, "").slice(0, 4);
                       handleSlotChange(slot.id, "year", v);
                     }}
-                    className="w-[72px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                    className="w-[72px] bg-transparent text-foreground text-[16px] text-center outline-none placeholder:text-muted-foreground/50"
                   />
                   <span className="text-muted-foreground/40 text-[14px]">/</span>
                   <input
@@ -191,7 +191,7 @@ export default function Index() {
                         handleSlotChange(slot.id, "month", v);
                       }
                     }}
-                    className="w-[40px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                    className="w-[40px] bg-transparent text-foreground text-[16px] text-center outline-none placeholder:text-muted-foreground/50"
                   />
                   <span className="text-muted-foreground/40 text-[14px]">/</span>
                   <input
@@ -206,7 +206,7 @@ export default function Index() {
                         handleSlotChange(slot.id, "day", v);
                       }
                     }}
-                    className="w-[40px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                    className="w-[40px] bg-transparent text-foreground text-[16px] text-center outline-none placeholder:text-muted-foreground/50"
                   />
                 </div>
               </div>
