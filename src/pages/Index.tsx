@@ -191,7 +191,7 @@ export default function Index() {
                         handleSlotChange(slot.id, "month", v);
                       }
                     }}
-                    className="w-[40px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                    className="w-[40px] bg-transparent text-foreground text-[16px] text-center outline-none placeholder:text-muted-foreground/50"
                   />
                   <span className="text-muted-foreground/40 text-[14px]">/</span>
                   <input
