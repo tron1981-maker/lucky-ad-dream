@@ -176,7 +176,7 @@ export default function Index() {
                       const v = e.target.value.replace(/\D/g, "").slice(0, 4);
                       handleSlotChange(slot.id, "year", v);
                     }}
-                    className="w-[72px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                    className="w-[72px] bg-transparent text-foreground text-[16px] text-center outline-none placeholder:text-muted-foreground/50"
                   />
                   <span className="text-muted-foreground/40 text-[14px]">/</span>
                   <input
