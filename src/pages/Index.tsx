@@ -206,7 +206,7 @@ export default function Index() {
                         handleSlotChange(slot.id, "day", v);
                       }
                     }}
-                    className="w-[40px] bg-transparent text-foreground text-[14px] text-center outline-none placeholder:text-muted-foreground/50"
+                    className="w-[40px] bg-transparent text-foreground text-[16px] text-center outline-none placeholder:text-muted-foreground/50"
                   />
                 </div>
               </div>
